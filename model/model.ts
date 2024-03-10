@@ -17,3 +17,11 @@ export interface imageUpload{
   count : string;
   userID : number;
 }
+
+
+
+export interface Vote {
+  userID: string;
+  imageID: number;
+  elorating: number;
+}
