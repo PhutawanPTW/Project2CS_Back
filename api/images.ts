@@ -12,8 +12,7 @@ router.get("/", (req, res) => {
 });
 
 router.put("/:id", async (req, res) => {
-  
-  const id = + req.params.id;
+  const id = +req.params.id;
   console.log(id);
   let update: imageUpload = req.body; // รับข้อมูลที่ต้องการอัปเดตจาก req.body
   console.log(req.body);
@@ -37,13 +36,10 @@ router.put("/:id", async (req, res) => {
     updateImage.uploadDate,
     updateImage.count,
     updateImage.userID,
-    id
+    id,
   ]);
   conn.query(sql, (err, result) => {
     if (err) throw err;
     res.status(201).json({ affected_row: result.affectedRows });
   });
 });
-
-
-
