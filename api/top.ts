@@ -16,7 +16,7 @@ router.get("/today", (req, res) => {
       DATE(s.date) = CURRENT_DATE()
     ORDER BY 
       s.voteScore DESC 
-    LIMIT 10`;
+    `;
 
   conn.query(sql, (err, result) => {
     if (err) throw err;
@@ -37,7 +37,7 @@ router.get("/yesterday", (req, res) => {
       DATE(s.date) = DATE(DATE_SUB(CURDATE(), INTERVAL 1 DAY))
     ORDER BY 
       s.voteScore DESC 
-    LIMIT 10`;
+    `;
 
   conn.query(sql, (err, result) => {
     if (err) throw err;
