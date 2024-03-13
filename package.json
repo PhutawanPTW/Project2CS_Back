@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@angular/cli": "^17.2.3",
     "@types/mysql": "^2.15.25",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.4.2"
