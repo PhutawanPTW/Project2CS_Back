@@ -18,6 +18,8 @@ export interface imageUpload{
   userID : number;
 }
 
+
+
 export interface Vote {
   userID: string;
   imageID: number;

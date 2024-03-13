@@ -55,7 +55,7 @@ router.post("/", (req, res) => {
 
 router.post("user/upload" , (req , res)=>{
   let upload : imageUpload = req.body;
-  let sql = "INSERT INTO `images` (`url`) VALUES (?)";
+  let sql = "INSERT INTO `images` (`url`, `uploadDate`, `count`) VALUES (?,?,?)";
   // sql = mysql.format(sql, [
   //   user.username,
   //   user.password,
@@ -63,4 +63,4 @@ router.post("user/upload" , (req , res)=>{
   //   user.type,
   //   image
   // ]);
-});
+})

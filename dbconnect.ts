@@ -1,5 +1,6 @@
 import mysql from "mysql";
-import util from 'util';
+import util from "util";
+
 
 export const conn = mysql.createConnection({
   host: "202.28.34.197",
@@ -9,4 +10,3 @@ export const conn = mysql.createConnection({
 });
 
 export const queryAsync = util.promisify(conn.query).bind(conn);
-
