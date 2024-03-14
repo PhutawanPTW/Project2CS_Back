@@ -92,8 +92,6 @@ router.delete("/", (req, res) => {
   res.json({ message: "Images have been deleted" });
 });
 
-
-
 router.put("/:id", async (req, res) => {
   const id = + req.params.id;
   console.log(id);
@@ -126,3 +124,4 @@ router.put("/:id", async (req, res) => {
     res.status(201).json({ affected_row: result.affectedRows });
   });
 });
+

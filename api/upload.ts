@@ -1,8 +1,8 @@
 import express from "express";
-import path from "path";
 import multer from "multer";
 import { firebaseConfig } from "../api/config-fb";
-
+import mysql from "mysql";
+import { conn } from "../dbconnect";
 import { initializeApp } from "firebase/app";
 import {
   getStorage,
@@ -17,32 +17,61 @@ export const router = express.Router();
 initializeApp(firebaseConfig);
 const storage = getStorage();
 
-class FileMiddleware {
-  filename = "";
-  // create multer object to save file in disk
-  public readonly diskLoader = multer({
-    // diskStorage = save to memmory
-    storage: multer.memoryStorage(),
-    // limit size
-    limits: {
-      fileSize: 67108864, // 64 MByte
-    },
-  });
-}
-const fileUpload = new FileMiddleware();
-router.post("/", fileUpload.diskLoader.single("file"), async (req, res) => {
-  const filename = Math.round(Math.random() * 10000) + "png";
-  const storageRef = ref(storage, "image/" + filename);
-  const metadata = {
-    contentType: req.file!.mimetype,
-  };
-  const snapshot = await uploadBytesResumable(
-    storageRef,
-    req.file!.buffer,
-    metadata
-  );
-  const downloadURL = await getDownloadURL(snapshot.ref);
-  res.status(200).json({
-    filename: downloadURL,
-  });
+// class FileMiddleware {
+//   filename = "";
+//   // create multer object to save file in disk
+//   public readonly diskLoader = multer({
+//     // diskStorage = save to memory
+//     storage: multer.memoryStorage(),
+//     // limit size
+//     limits: {
+//       fileSize: 67108864, // 64 MByte
+//     },
+//   });
+// }
+
+
+
+const upload = multer({ storage: multer.memoryStorage() });
+
+router.post("/:id", upload.single("filename"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).send('No file uploaded!');
+    }
+    const dateTime = giveCurrentDateTime();
+
+    const storageRef = ref(storage,`files/${req.file.originalname + "       " + dateTime}`);
+
+    const metadata = {
+      contentType: req.file.mimetype,
+    };
+
+    const snapshot = await uploadBytesResumable(storageRef, req.file.buffer, metadata);
+    const downloadURL = await getDownloadURL(snapshot.ref);
+    const pictureId = req.params.id;
+    let sql = "INSERT INTO `images`(`url`, `uploadDate`, `count`, `userID`) VALUES (?, ?, ?, ?)";
+    sql = mysql.format(sql, [downloadURL, dateTime, 1000, pictureId]);
+
+    // Assuming `conn` is your MySQL connection object
+    conn.query(sql, (err, result) => {
+      if (err) throw err;
+      res
+        .status(201)
+        .json({ affected_row: result.affectedRows, last_idx: result.insertId });
+    });
+    console.log('File successfully uploaded.');
+  } catch (error) {
+    return res.status(400).send(error);
+  }
 });
+
+const giveCurrentDateTime = () => {
+  const today = new Date();
+  const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+  const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+  const dateTime = date + ' ' + time;
+  return dateTime;
+}
+
+export default router;
