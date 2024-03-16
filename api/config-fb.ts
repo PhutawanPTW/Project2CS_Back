@@ -1,9 +1,9 @@
 export const firebaseConfig = {
-  apiKey: "AIzaSyClHPJVKBCUkjBkn5Kyivk89r04J2YF55M",
-  authDomain: "view-mash.firebaseapp.com",
-  projectId: "view-mash",
-  storageBucket: "view-mash.appspot.com",
-  messagingSenderId: "329200735325",
-  appId: "1:329200735325:web:9dc8a293a4c4293073a9b4",
-  measurementId: "G-PPDTR5TCQX"
+  apiKey: "AIzaSyCgdThXLRjXzPUdz8t3g-a7qEnr7stwXw0",
+  authDomain: "projectviewmash-bac0a.firebaseapp.com",
+  projectId: "projectviewmash-bac0a",
+  storageBucket: "projectviewmash-bac0a.appspot.com",
+  messagingSenderId: "365439332556",
+  appId: "1:365439332556:web:650dfe89132e5fe8961269",
+  measurementId: "G-SP1DX3MQME"
 };
