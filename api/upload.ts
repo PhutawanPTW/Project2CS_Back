@@ -30,27 +30,82 @@ const storage = getStorage();
 //   });
 // }
 
-
-
 const upload = multer({ storage: multer.memoryStorage() });
 
-router.post("/:id", upload.single("filename"), async (req, res) => {
+router.post("/profileuser", upload.single("image"), async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).send('No file uploaded!');
+      return res.status(400).send("No file uploaded!");
     }
     const dateTime = giveCurrentDateTime();
 
-    const storageRef = ref(storage,`files/${req.file.originalname + "       " + dateTime}`);
+    const storageRef = ref(
+      storage,
+      `profile_images/${req.file.originalname + "       " + dateTime}`
+    );
 
     const metadata = {
       contentType: req.file.mimetype,
     };
 
-    const snapshot = await uploadBytesResumable(storageRef, req.file.buffer, metadata);
+    const snapshot = await uploadBytesResumable(
+      storageRef,
+      req.file.buffer,
+      metadata
+    );
+    const downloadURL = await getDownloadURL(snapshot.ref);
+
+    const { userID, username, password, type, email } = req.body;
+
+    let sql =
+      "INSERT INTO `users`(`userID`, `username`, `password`, `image`, `type`, `email`) VALUES (?, ?, ?, ?, ?, ?)";
+    sql = mysql.format(sql, [
+      userID,
+      username,
+      password,
+      downloadURL,
+      type,
+      email,
+    ]);
+
+    // Assuming `conn` is your MySQL connection object
+    conn.query(sql, (err, result) => {
+      if (err) throw err;
+      res
+        .status(201)
+        .json({ affected_row: result.affectedRows, last_idx: result.insertId });
+    });
+    console.log("Profile user uploaded successfully.");
+  } catch (error) {
+    return res.status(400).send(error);
+  }
+});
+
+router.post("/:id", upload.single("filename"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).send("No file uploaded!");
+    }
+    const dateTime = giveCurrentDateTime();
+
+    const storageRef = ref(
+      storage,
+      `files/${req.file.originalname + "       " + dateTime}`
+    );
+
+    const metadata = {
+      contentType: req.file.mimetype,
+    };
+
+    const snapshot = await uploadBytesResumable(
+      storageRef,
+      req.file.buffer,
+      metadata
+    );
     const downloadURL = await getDownloadURL(snapshot.ref);
     const pictureId = req.params.id;
-    let sql = "INSERT INTO `images`(`url`, `uploadDate`, `count`, `userID`) VALUES (?, ?, ?, ?)";
+    let sql =
+      "INSERT INTO `images`(`url`, `uploadDate`, `count`, `userID`) VALUES (?, ?, ?, ?)";
     sql = mysql.format(sql, [downloadURL, dateTime, 1000, pictureId]);
 
     // Assuming `conn` is your MySQL connection object
@@ -60,7 +115,7 @@ router.post("/:id", upload.single("filename"), async (req, res) => {
         .status(201)
         .json({ affected_row: result.affectedRows, last_idx: result.insertId });
     });
-    console.log('File successfully uploaded.');
+    console.log("File successfully uploaded.");
   } catch (error) {
     return res.status(400).send(error);
   }
@@ -68,10 +123,12 @@ router.post("/:id", upload.single("filename"), async (req, res) => {
 
 const giveCurrentDateTime = () => {
   const today = new Date();
-  const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-  const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-  const dateTime = date + ' ' + time;
+  const date =
+    today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
+  const time =
+    today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+  const dateTime = date + " " + time;
   return dateTime;
-}
+};
 
 export default router;
