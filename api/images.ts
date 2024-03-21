@@ -87,7 +87,6 @@ router.delete("/", (req, res) => {
       if (err) throw err;
     });
   }
-  
 
   res.json({ message: "Images have been deleted" });
 });
