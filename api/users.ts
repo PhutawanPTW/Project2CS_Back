@@ -9,6 +9,7 @@ router.get("/", (req, res) => {
   conn.query("SELECT * FROM users", (err, result) => {
     if (err) throw err;
     res.json(result);
+    
   });
 });
 
