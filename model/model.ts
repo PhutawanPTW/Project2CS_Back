@@ -35,4 +35,5 @@ export interface ImageUsers {
 export interface Image {
   userID: number;
   imageID: number;
+  
 }
