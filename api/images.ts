@@ -12,6 +12,17 @@ router.get("/", (req, res) => {
 });
 
 
+router.get("/count", (req, res) => {
+  let sql = 'SELECT userID, COUNT(*) AS image_count FROM images GROUP BY userID';
+  conn.query(sql, (err, result) => {
+    if (err) throw err;
+    if (result.length > 0) {
+      res.status(201).json(result);
+    } else {
+      res.status(404).json({ message: "image not found" });
+    }
+  });
+});
 
 router.get("/:id", (req, res) => {
   let id = req.params.id;
